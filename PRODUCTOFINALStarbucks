@@ -1,0 +1,752 @@
+import java.util.Scanner;
+import java.util.Random;
+import java.util.ArrayList;
+
+
+class Starbucks {
+    static Scanner input = new Scanner(System.in);
+    static Random random = new Random();
+    static String usuarionombre, usuariocontraseña, usuariocorreo, usuariodni;
+
+    static ArrayList<String> carritoNombres = new ArrayList<>();
+    static ArrayList<Double> carritoPreciosUnitarios = new ArrayList<>();
+    static ArrayList<Integer> carritoCantidades = new ArrayList<>();
+
+    static String adminCorreo = "admin@starbucks.com";
+    static String adminContrasena = "Admin123!";
+
+
+    static ArrayList<String> vendedoresCorreos = new ArrayList<>();
+    static ArrayList<String> vendedoresContras = new ArrayList<>();
+    static ArrayList<String> productosAdminNombres = new ArrayList<>();
+    static ArrayList<Double> productosAdminPrecios = new ArrayList<>();
+    public static void main(String[] args) {
+        int opcion = 0;
+        while (opcion != 3) {
+            System.out.println("\n-----BIENVENIDO A STABUCKS-----");
+            System.out.println(" 1: Registar Usuario");
+            System.out.println(" 2: Iniciar Sesion");
+            System.out.println(" 3: Cerrar Sesion");
+            System.out.println(" Elige una de las opciones");
+            String opciones = input.nextLine();
+            switch (opciones) {
+                case "1":
+                    Starbucks.registrarUsuario();
+                    break;
+                case "2":
+                    Starbucks.iniciarsesion();
+                    break;
+                case "3":
+                    System.out.println("¡Gracias por visitar Starbucks! ¡Vuelva pronto!");
+                    return;
+                default:
+                    System.out.println("Opción no válida. Intentelo de nuevo.");
+            }
+        }
+    }
+
+    public static void registrarUsuario() {
+        System.out.println("----REGISTRO DE USUARIO----");
+        System.out.println("Nombre Completo :");
+        usuarionombre = input.nextLine();
+        do {
+            System.out.println("Ingrese su numero de DNI (8 digitos)");
+            usuariodni = input.nextLine();
+        }
+        while (!usuariodni.matches("\\d{8}"));
+
+        do {
+            System.out.println("Ingrese su correo electronico \n Como por ejemplo  (juancarlos@gmail.com)");
+            usuariocorreo = input.nextLine();
+        }
+        while (!usuariocorreo.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$"));
+        do {
+            System.out.println("Crea una contraseña segura.\n Debe tener al menos 8 caracteres, incluir una mayúscula, un número y un símbolo (como !, @, #, etc.)  ");
+            usuariocontraseña = input.nextLine();
+        }
+        while (!usuariocontraseña.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$"));
+        System.out.println("usuario registrado correctamente!");
+    }
+
+    public static void iniciarsesion() {
+        System.out.println("---Iniciar Sesion---");
+        int intentos = 0;
+        while (intentos < 3) {
+            System.out.println("ingrese el correo");
+            String correo = input.nextLine();
+            System.out.println("ingrese la contraseña");
+            String contraseña = input.nextLine();
+            if (correo.equals(adminCorreo) && contraseña.equals(adminContrasena)) {
+                System.out.println("Bienvenido administrador.");
+                menuAdmin();
+
+                return;
+            } else if (correo.equals(usuariocorreo) && contraseña.equals(usuariocontraseña)) {
+                System.out.println("Bienvenido...!! " + usuarionombre + " usted es afortunado de estar en starbucks ");
+                menuprincipal();
+                return;
+            } else {
+                intentos++;
+                System.out.println("intento fallido " + intentos + "/3\n");
+            }
+        }
+        System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.");
+    }
+    public static void menuAdmin() {
+        while (true) {
+            System.out.println("\n--- MENÚ ADMINISTRADOR ---");
+            System.out.println("1. Agregar producto nuevo");
+            System.out.println("2. Registrar vendedor");
+            System.out.println("3. Mostrar todos los productos");
+            System.out.println("4. Eliminar producto agregado");
+            System.out.println("5. Salir");
+            System.out.print("Seleccione una opción: ");
+            String opcion = input.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    agregarProductoAdmin();
+                    break;
+                case "2":
+                    registrarVendedor();
+                    break;
+                case "3":
+                    mostrarTodosLosProductos();
+                    break;
+                case "4":
+                    eliminarProductoAdmin();
+                    break;
+                case "5":
+                    return;
+                default:
+                    System.out.println("Opción inválida");
+            }
+        }
+    }
+    public static void agregarProductoAdmin() {
+        System.out.println("Ingrese nombre del producto:");
+        String nombre = input.nextLine();
+        System.out.println("Ingrese precio del producto:");
+        double precio = input.nextDouble();
+        input.nextLine();
+
+        productosAdminNombres.add(nombre);
+        productosAdminPrecios.add(precio);
+
+        System.out.println("Producto agregado correctamente por el admin.");
+    }
+    public static void registrarVendedor() {
+        System.out.println("Ingrese correo del vendedor:");
+        String correo = input.nextLine();
+        System.out.println("Ingrese contraseña del vendedor:");
+        String contrasena = input.nextLine();
+
+        vendedoresCorreos.add(correo);
+        vendedoresContras.add(contrasena);
+
+        System.out.println("Vendedor registrado exitosamente.");
+    }
+    public static void mostrarTodosLosProductos() {
+        System.out.println("\n--- Productos Fijos ---");
+        System.out.println("Por categorías, revisados en el menú normal de Starbucks.");
+        System.out.println("\n--- Productos Agregados por el Admin ---");
+        if (productosAdminNombres.isEmpty()) {
+            System.out.println("No hay productos agregados.");
+        } else {
+            for (int i = 0; i < productosAdminNombres.size(); i++) {
+                System.out.printf("%d. %s - S/%.2f%n", (i+1), productosAdminNombres.get(i), productosAdminPrecios.get(i));
+            }
+        }
+    }
+    public static void eliminarProductoAdmin() {
+        if (productosAdminNombres.isEmpty()) {
+            System.out.println("No hay productos dinámicos para eliminar.");
+            return;
+        }
+        System.out.println("\n--- Productos Agregados ---");
+        for (int i = 0; i < productosAdminNombres.size(); i++) {
+            System.out.printf("%d. %s - S/%.2f%n", (i+1), productosAdminNombres.get(i), productosAdminPrecios.get(i));
+        }
+        System.out.print("Ingrese el número del producto a eliminar: ");
+        int indice = input.nextInt();
+        input.nextLine();
+
+        if (indice >= 1 && indice <= productosAdminNombres.size()) {
+            String eliminado = productosAdminNombres.remove(indice - 1);
+            productosAdminPrecios.remove(indice - 1);
+            System.out.println("'" + eliminado + "' ha sido eliminado del listado dinámico.");
+        } else {
+            System.out.println("Número inválido.");
+        }
+    }
+
+
+    public static void menuprincipal() {
+        while (true) {
+            System.out.println("---BIENVENIDO AL MENU PRINCIPAL DE STARBUCKS---");
+            System.out.println("1. Bebidas");
+            System.out.println("2. Alimentos");
+            System.out.println("3. Merch y Café en Grano");
+            System.out.println("4. Packs y Boxes");
+            System.out.println("5. Ver Carrito");
+            System.out.println("6. Pagar y Salir");
+            System.out.print("Seleccione una opción: ");
+            String opcion = input.nextLine();
+            switch (opcion) {
+                case "1":
+                    Starbucks.menubebida();
+                    break;
+                case "2":
+                    Starbucks.menuAlimentos();
+                    break;
+                case "3":
+                    Starbucks.menuMerchCafeGrano();
+                    break;
+                case "4":
+                    Starbucks.menuPacksBoxes();
+                    break;
+                case "5":
+                    Starbucks.verCarrito();
+                    break;
+                case "6":
+                    Starbucks.realizarPago();
+                    return;
+                default:
+                    System.out.println("Opción no válida, intente de nuevo");
+            }
+        }
+    }
+
+    public static void menubebida() {
+        String opcion;
+        do {
+            System.out.println("\n--- Menú de Bebidas ---");
+            System.out.println("1. Frappuccinos");
+            System.out.println("2. Espresso Caliente");
+            System.out.println("3. Espresso Frío");
+            System.out.println("4. Refreshers");
+            System.out.println("5. Otras Bebidas Calientes");
+            System.out.println("6. Otras Bebidas Frías");
+            System.out.println("7. Shaken Espresso");
+            System.out.println("8. Volver al Menú Principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = input.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    mostrarProductos(obtenerFrappuccinosNombres(), obtenerFrappuccinosPrecios(), "Frappuccinos");
+                    break;
+                case "2":
+                    mostrarProductos(obtenerEspressoCalienteNombres(), obtenerEspressoCalientePrecios(), "Espresso Caliente");
+                    break;
+                case "3":
+                    mostrarProductos(obtenerEspressoFrioNombres(), obtenerEspressoFrioPrecios(), "Espresso Frío");
+                    break;
+                case "4":
+                    mostrarProductos(obtenerRefreshersNombres(), obtenerRefreshersPrecios(), "Refreshers");
+                    break;
+                case "5":
+                    mostrarProductos(obtenerOtrasBebidasCalientesNombres(), obtenerOtrasBebidasCalientesPrecios(), "Otras Bebidas Calientes");
+                    break;
+                case "6":
+                    mostrarProductos(obtenerOtrasBebidasFriasNombres(), obtenerOtrasBebidasFriasPrecios(), "Otras Bebidas Frías");
+                    break;
+                case "7":
+                    mostrarProductos(obtenerShakenEspressoNombres(), obtenerShakenEspressoPrecios(), "Shaken Espresso");
+                    break;
+                case "8":
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("8"));
+    }
+
+    public static void menuAlimentos() {
+        String opcion;
+        do {
+            System.out.println("\n--- Menú de Alimentos ---");
+            System.out.println("1. Pastries");
+            System.out.println("2. Postres");
+            System.out.println("3. Sandwiches");
+            System.out.println("4. Volver al Menú Principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = input.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    mostrarProductos(obtenerPastriesNombres(), obtenerPastriesPrecios(), "Pastries");
+                    break;
+                case "2":
+                    mostrarProductos(obtenerPostresNombres(), obtenerPostresPrecios(), "Postres");
+                    break;
+                case "3":
+                    mostrarProductos(obtenerSandwichesNombres(), obtenerSandwichesPrecios(), "Sandwiches");
+                    break;
+                case "4":
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("4"));
+    }
+
+    public static void menuMerchCafeGrano() {
+        String opcion;
+        do {
+            System.out.println("\n--- Menú de Merch y Café en Grano ---");
+            System.out.println("1. Café en Grano");
+            System.out.println("2. Merch");
+            System.out.println("3. Volver al Menú Principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = input.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    mostrarProductos(obtenerCafeEnGranoNombres(), obtenerCafeEnGranoPrecios(), "Café en Grano");
+                    break;
+                case "2":
+                    mostrarProductos(obtenerMerchNombres(), obtenerMerchPrecios(), "Merch");
+                    break;
+                case "3":
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("3"));
+    }
+
+    public static void menuPacksBoxes() {
+        String opcion;
+        do {
+            System.out.println("\n--- Menú de Packs y Boxes ---");
+            System.out.println("1. Coffee for Share");
+            System.out.println("2. Desayunos");
+            System.out.println("3. Antojos de la Tarde");
+            System.out.println("4. Volver al Menú Principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = input.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    mostrarProductos(obtenerCoffeeForShareNombres(), obtenerCoffeeForSharePrecios(), "Coffee for Share");
+                    break;
+                case "2":
+                    mostrarProductos(obtenerDesayunosNombres(), obtenerDesayunosPrecios(), "Desayunos");
+                    break;
+                case "3":
+                    mostrarProductos(obtenerAntojosTardeNombres(), obtenerAntojosTardePrecios(), "Antojos de la Tarde");
+                    break;
+                case "4":
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("4"));
+    }
+
+
+    public static ArrayList<String> obtenerFrappuccinosNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Fresa Creme Frappuccino con perlas"); nombres.add("Macadamia Frappuccino"); nombres.add("Cookies & Creme Frappuccino");
+        nombres.add("Chocolate Cookies & Creme Frappuccino"); nombres.add("Mocha Blanco Frappuccino"); nombres.add("Fresa Creme Frappuccino");
+        nombres.add("Black & White Frappuccino ®"); nombres.add("Ultimate Caramel Frappuccino"); nombres.add("Mocha Frappuccino");
+        nombres.add("Chocolúcuma Frappuccino"); nombres.add("Caramel Frappuccino"); nombres.add("Triple Mocha Frappuccino");
+        nombres.add("Algarrobina Frappuccino"); nombres.add("Chocolate Crème Frappuccino"); nombres.add("Lúcuma Crème Frappuccino");
+        nombres.add("Vainilla Crème Frappuccino"); nombres.add("Café Frappuccino"); nombres.add("Algarrobina Creme Frappuccino");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerFrappuccinosPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(18.50); precios.add(16.50); precios.add(16.50);
+        precios.add(16.50); precios.add(15.00); precios.add(15.00);
+        precios.add(16.50); precios.add(16.00); precios.add(15.00);
+        precios.add(17.00); precios.add(15.00); precios.add(16.50);
+        precios.add(15.50); precios.add(15.00); precios.add(16.50);
+        precios.add(15.00); precios.add(12.50); precios.add(14.50);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerEspressoCalienteNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Chocolate Blanco Macadamia Latte"); nombres.add("Black & White Mocha"); nombres.add("Americano");
+        nombres.add("Flat White"); nombres.add("Latte"); nombres.add("Latte Macchiato");
+        nombres.add("Mocha Café"); nombres.add("Vainilla Latte"); nombres.add("Caramel Macchiato");
+        nombres.add("Mocha blanco café"); nombres.add("Skinny Vainilla Latte"); nombres.add("Algarrobina Latte");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerEspressoCalientePrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(15.00); precios.add(14.50); precios.add(9.00);
+        precios.add(14.00); precios.add(11.50); precios.add(14.00);
+        precios.add(14.50); precios.add(13.00); precios.add(14.50);
+        precios.add(14.50); precios.add(13.00); precios.add(15.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerEspressoFrioNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Cocoa Macchiatto Frío con bebida de avena"); nombres.add("Black Cold Brew"); nombres.add("Americano helado");
+        nombres.add("Latte Helado"); nombres.add("Vainilla Latte Helado"); nombres.add("Caramel Macchiato Helado");
+        nombres.add("Mocha Blanco Café Helado"); nombres.add("Skinny Vainilla Latte Helado"); nombres.add("Mocha Café Helado");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerEspressoFrioPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(16.00); precios.add(10.00); precios.add(9.00);
+        precios.add(11.50); precios.add(13.00); precios.add(14.50);
+        precios.add(14.50); precios.add(11.50); precios.add(14.50);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerRefreshersNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Strawberry Acaí Refresher"); nombres.add("Strawberry Acaí Lemonade Refresher"); nombres.add("Pink Drink");
+        nombres.add("Mango Dragon Fruit Refresher"); nombres.add("Mango Dragon Fruit Lemonade Refresher"); nombres.add("Dragon Drink");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerRefreshersPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(13.50); precios.add(14.50); precios.add(15.50);
+        precios.add(13.50); precios.add(14.50); precios.add(15.50);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerOtrasBebidasCalientesNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Chocolate Caliente"); nombres.add("Té Chai Latte"); nombres.add("Té Chai Teavanna");
+        nombres.add("Té Hibiscus Teavanna"); nombres.add("Té Mint Citrus Teavanna"); nombres.add("Té Chamomile");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerOtrasBebidasCalientesPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(13.00); precios.add(12.50); precios.add(9.00);
+        precios.add(9.00); precios.add(9.00); precios.add(9.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerOtrasBebidasFriasNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Matcha Frío con Perlas de Frambuesa"); nombres.add("Té Mint Citrus Helado"); nombres.add("Té Hibiscus Helado Teavanna");
+        nombres.add("Té Chamoline helado"); nombres.add("Chocolate Helado");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerOtrasBebidasFriasPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(16.50); precios.add(9.00); precios.add(9.00);
+        precios.add(9.00); precios.add(13.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerShakenEspressoNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Brown Sugar Shaken Espresso Frio con Bebida de Avena"); nombres.add("Mocha Blanco Shaken Espresso frío con Bebida de avena"); nombres.add("Chocolate Shaken Espresso Frío con bebida de avena");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerShakenEspressoPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(16.50); precios.add(16.50); precios.add(16.50);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerPastriesNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Galleta rellena de avellana"); nombres.add("Banana Bread"); nombres.add("Muffin de Naranja");
+        nombres.add("Keke de zanahoria"); nombres.add("Galleta cranberry"); nombres.add("Keke de limón");
+        nombres.add("Galleta de chocochips"); nombres.add("Muffin de berries"); nombres.add("Egg Bites de Jamón y Queso");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerPastriesPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(10.00); precios.add(10.00); precios.add(9.50);
+        precios.add(9.50); precios.add(6.00); precios.add(9.50);
+        precios.add(6.00); precios.add(9.50); precios.add(9.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerPostresNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Crocante de manzana vegetal"); nombres.add("Cake Pop Vainilla"); nombres.add("Cheesecake de Arándanos");
+        nombres.add("Brownie de Cookies & Cream"); nombres.add("Torta de chocolate");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerPostresPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(15.00); precios.add(6.50); precios.add(15.00);
+        precios.add(8.50); precios.add(12.50);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerSandwichesNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Croissant de mantequilla"); nombres.add("Croissant jamón del país y queso"); nombres.add("Croissant jamón inglés y queso");
+        nombres.add("Sandwich Pavita & queso"); nombres.add("Sandwich Pavita, queso & espinaca"); nombres.add("Sandwich Brioche campesino");
+        nombres.add("Empanada de lomo"); nombres.add("Empanada de ají de pollo"); nombres.add("Sandwich Panino vesubio");
+        nombres.add("Sandwich Chicken panino"); nombres.add("Sandwich Chicken ciabatta"); nombres.add("Sandwich triple");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerSandwichesPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(6.00); precios.add(15.50); precios.add(15.50);
+        precios.add(13.00); precios.add(14.00); precios.add(15.00);
+        precios.add(9.50); precios.add(9.50); precios.add(12.00);
+        precios.add(13.50); precios.add(13.50); precios.add(15.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerCafeEnGranoNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Perú"); nombres.add("Espresso Roast"); nombres.add("Verona");
+        nombres.add("Sumatra"); nombres.add("Colombia 250 gr."); nombres.add("Komodo Dragon");
+        nombres.add("Guatemala Casi Cielo 250 gr.");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerCafeEnGranoPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(37.00); precios.add(37.00); precios.add(37.00);
+        precios.add(37.00); precios.add(37.00); precios.add(37.00);
+        precios.add(40.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerMerchNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Plastic Cold Cup - Farm Rio"); nombres.add("Black Cold Cup - Farm Rio"); nombres.add("Cold Cup Banana Mix - Farm Rio");
+        nombres.add("Cold Cup Lenco Azulejo - Farm Rio"); nombres.add("Water Bottle - Farm Rio"); nombres.add("Ceramic Mug - Farm Rio");
+        nombres.add("Mother's Day Ceramic Mug"); nombres.add("Mug Cerámico Cherry Blossom"); nombres.add("Mug Contour Cherry Blossom");
+        nombres.add("Tumbler Drink Thru Layered Cherry Blossom"); nombres.add("Tumbler Plástico Cherry Blossom"); nombres.add("Straw Topper Cold Cup Cherry Blossom");
+        nombres.add("Soft Touch Cold Cup Cherry Blossom"); nombres.add("Pleated Cold Cup Rosa Cherry Blossom"); nombres.add("Studed Cold Cup Rosa Cherry Blossom");
+        nombres.add("Stanley Rosa"); nombres.add("Tumbler Metálico Celeste"); nombres.add("Prensa Francesa");
+        nombres.add("Prensa Cold Brew"); nombres.add("Prensa Pour Over"); nombres.add("Vaso blanco reusable Sirena verde - 16 oz");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerMerchPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(135.00); precios.add(135.00); precios.add(135.00);
+        precios.add(135.00); precios.add(135.00); precios.add(85.00);
+        precios.add(90.00); precios.add(80.00); precios.add(90.00);
+        precios.add(125.00); precios.add(90.00); precios.add(135.00);
+        precios.add(135.00); precios.add(125.00); precios.add(135.00);
+        precios.add(195.00); precios.add(135.00); precios.add(160.00);
+        precios.add(160.00); precios.add(80.00); precios.add(20.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerCoffeeForShareNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Coffee Traveler"); nombres.add("Pack Coffee Mixto"); nombres.add("Pack Coffee Sandwich"); nombres.add("Pack Coffee Galleta");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerCoffeeForSharePrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(60.00); precios.add(120.00); precios.add(135.00); precios.add(95.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerDesayunosNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Dúo Desayuno"); nombres.add("Desayuno Para Dos");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerDesayunosPrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(11.00); precios.add(30.00);
+        return precios;
+    }
+
+    public static ArrayList<String> obtenerAntojosTardeNombres() {
+        ArrayList<String> nombres = new ArrayList<>();
+        nombres.add("Muffins 4 share"); nombres.add("Momentos Dulces"); nombres.add("Sweet & Share");
+        return nombres;
+    }
+
+    public static ArrayList<Double> obtenerAntojosTardePrecios() {
+        ArrayList<Double> precios = new ArrayList<>();
+        precios.add(32.00); precios.add(14.00); precios.add(26.00);
+        return precios;
+    }
+
+    public static void mostrarProductos(ArrayList<String> listaNombres, ArrayList<Double> listaPrecios, String tituloMenu) {
+        if (listaNombres.isEmpty()) {
+            System.out.println("No hay productos disponibles en esta categoría.");
+            return;
+        }
+
+        int opcionProducto;
+        do {
+            System.out.println("\n--- " + tituloMenu + " ---");
+            for (int i = 0; i < listaNombres.size(); i++) {
+                System.out.printf("%d. %s Desde: S/%.2f%n", (i + 1), listaNombres.get(i), listaPrecios.get(i));
+            }
+            System.out.println((listaNombres.size() + 1) + ". Volver");
+            System.out.print("Seleccione un producto para agregar al carrito (o " + (listaNombres.size() + 1) + " para volver): ");
+
+            opcionProducto = input.nextInt();
+            input.nextLine();
+
+            if (opcionProducto >= 1 && opcionProducto <= listaNombres.size()) {
+                String nombreSeleccionado = listaNombres.get(opcionProducto - 1);
+                Double precioSeleccionado = listaPrecios.get(opcionProducto - 1);
+                agregarAlCarrito(nombreSeleccionado, precioSeleccionado);
+            } else if (opcionProducto != (listaNombres.size() + 1)) {
+                System.out.println("Opción inválida. Intente de nuevo.");
+            }
+        } while (opcionProducto != (listaNombres.size() + 1));
+    }
+
+    public static void agregarAlCarrito(String nombreProducto, double precioProducto) {
+        boolean encontrado = false;
+        for (int i = 0; i < carritoNombres.size(); i++) {
+            if (carritoNombres.get(i).equals(nombreProducto)) {
+                carritoCantidades.set(i, carritoCantidades.get(i) + 1);     
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado) {
+            carritoNombres.add(nombreProducto);
+            carritoPreciosUnitarios.add(precioProducto);
+            carritoCantidades.add(1);
+        }
+        System.out.println("'" + nombreProducto + "' ha sido agregado al carrito.");
+    }
+
+    public static void verCarrito() {
+        if (carritoNombres.isEmpty()) {
+            System.out.println("\nEl carrito está vacío.");
+            return;
+        }
+
+        System.out.println("\n--- Tu Carrito de Compras ---");
+        double subtotal = 0;
+        for (int i = 0; i < carritoNombres.size(); i++) {
+            String nombre = carritoNombres.get(i);
+            double precio = carritoPreciosUnitarios.get(i);
+            int cantidad = carritoCantidades.get(i);
+            double totalProducto = precio * cantidad;
+            System.out.printf("%d. %s (x%d) - S/%.2f (Total: S/%.2f)%n", (i + 1), nombre, cantidad, precio, totalProducto);
+            subtotal += totalProducto;
+        }
+        System.out.printf("Subtotal: S/%.2f%n", subtotal);
+
+        System.out.println("\nOpciones del Carrito:");
+        System.out.println("1. Eliminar un producto");
+        System.out.println("2. Vaciar carrito");
+        System.out.println("3. Volver al menú principal");
+        System.out.print("Seleccione una opción: ");
+        int opcion = input.nextInt();
+        input.nextLine();
+
+        switch (opcion) {
+            case 1:
+                if (!carritoNombres.isEmpty()) {
+                    System.out.print("Ingrese el número del producto a eliminar: ");
+                    int indiceEliminar = input.nextInt();
+                    input.nextLine();
+                    if (indiceEliminar > 0 && indiceEliminar <= carritoNombres.size()) {
+                        String nombreEliminado = carritoNombres.remove(indiceEliminar - 1);
+                        carritoPreciosUnitarios.remove(indiceEliminar - 1);
+                        carritoCantidades.remove(indiceEliminar - 1);
+                        System.out.println("'" + nombreEliminado + "' ha sido eliminado del carrito.");
+                    } else {
+                        System.out.println("Número de producto inválido.");
+                    }
+                } else {
+                    System.out.println("El carrito ya está vacío.");
+                }
+                break;
+            case 2:
+                carritoNombres.clear();
+                carritoPreciosUnitarios.clear();
+                carritoCantidades.clear();
+                System.out.println("El carrito ha sido vaciado.");
+                break;
+            case 3:
+                break;
+            default:
+                System.out.println("Opción inválida.");
+                break;
+        }
+    }
+
+    public static void realizarPago() {
+        if (carritoNombres.isEmpty()) {
+            System.out.println("No hay productos en el carrito para realizar el pago.");
+            return;
+        }
+
+        double subtotal = 0;
+        for (int i = 0; i < carritoNombres.size(); i++) {
+            subtotal += carritoPreciosUnitarios.get(i) * carritoCantidades.get(i);
+        }
+
+        double igv = subtotal * 0.18;
+        double totalPagar = subtotal + igv;
+
+        System.out.println("\n--- Resumen de Compra ---");
+        System.out.printf("Subtotal: S/%.2f%n", subtotal);
+        System.out.printf("IGV (0.18%%): S/%.2f%n", igv);
+        System.out.printf("Total a Pagar: S/%.2f%n", totalPagar);
+
+        System.out.println("\nMétodo de Pago: Efectivo");
+        double montoRecibido;
+        do {
+            System.out.print("Ingrese el monto en efectivo recibido: S/");
+            montoRecibido = input.nextDouble();
+            if (montoRecibido < totalPagar) {
+                System.out.println("El monto recibido es insuficiente. Por favor, ingrese un monto mayor o igual al total a pagar.");
+            }
+        } while (montoRecibido < totalPagar);
+        input.nextLine();
+
+        double vuelto = montoRecibido - totalPagar;
+
+        System.out.printf("Monto Recibido: S/%.2f%n", montoRecibido);
+        System.out.printf("Vuelto: S/%.2f%n", vuelto);
+
+        generarFactura(subtotal, igv, totalPagar, montoRecibido, vuelto);
+
+        carritoNombres.clear();
+        carritoPreciosUnitarios.clear();
+        carritoCantidades.clear();
+    }
+
+    public static void generarFactura(double subtotal, double igv, double totalPagar, double montoRecibido, double vuelto) {
+        System.out.println("\n--- FACTURA STARBUCKS ---");
+        System.out.println("Fecha: " + java.time.LocalDateTime.now());
+        System.out.println("Cliente: " + (usuarionombre != null ? usuarionombre : "Invitado"));
+        System.out.println("------------------------------------");
+        System.out.printf("%-25s %5s %8s %10s%n", "Producto", "Cant.", "Precio", "Total");
+        System.out.println("------------------------------------");
+        for (int i = 0; i < carritoNombres.size(); i++) {
+            String nombre = carritoNombres.get(i);
+            double precio = carritoPreciosUnitarios.get(i);
+            int cantidad = carritoCantidades.get(i);
+            double totalProducto = precio * cantidad;
+            System.out.printf("%-25s %5d %8.2f %10.2f%n", nombre, cantidad, precio, totalProducto);
+        }
+        System.out.println("------------------------------------");
+        System.out.printf("Subtotal: %30.2f%n", subtotal);
+        System.out.printf("IGV (18%%): %29.2f%n", igv);
+        System.out.printf("Total a Pagar: %25.2f%n", totalPagar);
+        System.out.printf("Monto Recibido: %24.2f%n", montoRecibido);
+        System.out.printf("Vuelto: %32.2f%n", vuelto);
+        System.out.println("------------------------------------");
+        System.out.println("¡Gracias por su preferencia!");
+        System.out.println("------------------------------------");
+    }
+}
